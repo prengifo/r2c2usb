@@ -19,6 +19,7 @@ from sklearn.pipeline import make_pipeline
 from sklearn.decomposition import TruncatedSVD
 from sklearn.preprocessing import Normalizer
 from sklearn import cross_validation, preprocessing, grid_search
+import networkx as nx
 
 import matplotlib.pyplot as plt
 from termcolor import colored, cprint
@@ -156,6 +157,7 @@ def train_model(clf, filename, filter_func=lambda x: x,
     Y = extract_labels(rows)
     # print Y.
     vectorizer, X, vocab = word_matrix(get_tweets_text(rows))
+    print vocab
     # X = preprocessing.scale(X, with_mean=False)
     # else:
     #     vectorizer, X, vocab = use
@@ -246,7 +248,7 @@ def get_traffic(**kwargs):
 #     # clf = kwargs.pop('clf', OneVsRestClassifier(LogisticRegression())) # 0.7 +- 0.11
 #     clf = kwargs.pop('clf', OneVsRestClassifier(svm.LinearSVC(C=10))) # 0.7 +- 0.11
 #     # clf = kwargs.pop('clf', svm.LinearSVC(C=0.25, class_weight='auto')) # 0.69 +- 0.11
-#     model = train_model(clf, 'leDir.csv', extract_labels=get_dir_labels,
+#     model = train_mode-l(clf, 'leDir.csv', extract_labels=get_dir_labels,
 #                         ll=load_labels2, **kwargs)
 #     return model
 
@@ -378,3 +380,43 @@ if __name__ == '__main__':
     # get_dir(test_size=0.2)
     # get_traffic(test_size=0.2) # , cross_validate=True)
     color_code()
+    G=nx.Graph()
+    G.add_nodes_from(['El Cafetal','USB','Los Naranjos','El Hatillo','El Volcan','El Placer','Piedra Azul','Hoyo de la Puerta','La Trinidad','Los Samanes','Vizcaya','Los Ruices','Distribuidor AFF','La Rinconada'])
+
+    G.add_edges_from([('El Cafetal','Los Naranjos'),('El Cafetal','Vizcaya'),('El Cafetal','Los Ruices'),('Los Naranjos','El Hatillo'),('El Hatillo','El Volcan'),('El Volcan','El Placer'),('El Placer','USB'),('Piedra Azul','El Placer'),('La Trinidad','Piedra Azul'),('El Hatillo','La Trinidad'),('Vizcaya','Los Samanes'),('Los Samanes','La Trinidad'),('Los Ruices','Distribuidor AFF'),('Distribuidor AFF','La Trinidad'),('Distribuidor AFF','La Rinconada'),('La Rinconada','Hoyo de la Puerta'),('Hoyo de la Puerta','USB')])
+
+    G['El Cafetal']['Los Ruices']['rutas']= ['San Luis','Santa Paula','Santa Marta','Santa Sofia','Cafetal','Bulevard','Raul Leoni']
+
+    G['El Cafetal']['Vizcaya']['rutas'] = ['Vizcaya','La Guairita']
+
+    G['El Cafetal']['Los Naranjos']['rutas'] = ['Plaza las Americas','Los Naranjos']
+
+    G['Los Naranjos']['El Hatillo']['rutas'] = ['Hatillo','Universidad Nueva Esparta','La Muralla','Carretera vieja tocuyito']
+
+    G['El Hatillo']['El Volcan']['rutas'] = ['Kavak','Volcan']
+
+    G['El Volcan']['El Placer']['rutas'] = ['Oripoto','Gavilan','Jean Piglet']
+
+    G['El Placer']['USB']['rutas'] = ['El Placer','USB']
+
+    G['Hoyo de la Puerta']['USB']['rutas'] = ['Hoyo de la Puerta','USB']
+
+    G['La Rinconada']['Hoyo de la Puerta']['rutas'] = ['Tazon','La Rinconada','Charallave','La Victoria','Valencia','Valles del Tuy','Ocumitos','Las Mayas','ARC']
+
+    G['Distribuidor AFF']['La Rinconada']['rutas'] = ['Valle Coche','El Pulpo','Santa Monica','Proceres','Chaguaramos','La Bandera']
+
+    G['Los Ruices']['Distribuidor AFF']['rutas'] = ['Francisco Fajardo','El Pulpo','La Polar','Santa Cecilia','Distribuidor Altamira','Soto']
+
+    G['Vizcaya']['Los Samanes']['rutas'] = ['Los Samanes','La Guairita']
+
+    G['Los Samanes']['La Trinidad']['rutas'] = ['Los Samanes','La Trinidad','Procter']
+
+    G['Distribuidor AFF']['La Trinidad']['rutas'] = ['Prados del Este','Santa Fe','Concresa','Santa Rosa de Lima','Ciempies','Valle Arriba','Terrazas del Club','Los Campitos','Tunel de la Trinidad']
+
+    G['La Trinidad']['Piedra Azul']['rutas'] = ['Baruta','EPA','La Trinidad','Expreso']
+
+    G['Piedra Azul']['El Placer']['rutas'] = ['El Placer','Los Guayabitos','Ojo de Agua','Monterrey']
+
+    G['La Trinidad']['El Hatillo']['rutas'] = ['La Trinidad','El Hatillo','La Boyera']
+
+    print G.edges(data=True)
