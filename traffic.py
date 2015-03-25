@@ -419,4 +419,43 @@ if __name__ == '__main__':
 
     G['La Trinidad']['El Hatillo']['rutas'] = ['La Trinidad','El Hatillo','La Boyera']
 
+    # Tiempos optimistamente optimistas
+
+    G['El Cafetal']['Los Ruices']['tiempo']= 10
+
+    G['El Cafetal']['Vizcaya']['tiempo'] = 3
+
+    G['El Cafetal']['Los Naranjos']['tiempo'] = 15
+
+    G['Los Naranjos']['El Hatillo']['tiempo'] = 15
+
+    G['El Hatillo']['El Volcan']['tiempo'] = 15
+
+    G['El Volcan']['El Placer']['tiempo'] = 10
+
+    G['El Placer']['USB']['tiempo'] = 5
+
+    G['Hoyo de la Puerta']['USB']['tiempo'] = 10
+
+    G['La Rinconada']['Hoyo de la Puerta']['tiempo'] = 20
+
+    G['Distribuidor AFF']['La Rinconada']['tiempo'] = 20
+
+    G['Los Ruices']['Distribuidor AFF']['tiempo'] = 20
+
+    G['Vizcaya']['Los Samanes']['tiempo'] = 10
+
+    G['Los Samanes']['La Trinidad']['tiempo'] = 10
+
+    G['Distribuidor AFF']['La Trinidad']['tiempo'] = 15
+
+    G['La Trinidad']['Piedra Azul']['tiempo'] = 10
+
+    G['Piedra Azul']['El Placer']['tiempo'] = 10
+
+    G['La Trinidad']['El Hatillo']['tiempo'] = 15
+
     print G.edges(data=True)
+
+    print 'CAMINITO ----> ', nx.dijkstra_path(G,'El Cafetal', 'USB', weight='tiempo')
+    print 'COSTO ----> ', nx.dijkstra_path_length(G,'El Cafetal', 'USB', weight='tiempo')
