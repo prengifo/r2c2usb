@@ -6,7 +6,8 @@ from sklearn.metrics import confusion_matrix, classification_report
 from .utils import load_file
 from .preprocess import process_tweet
 import matplotlib.pyplot as plt
-from plots import plot_learning_curve
+from plots import plot_learning_curve, plot_confusion_matrix
+from danielesis.utils import load_synonyms
 
 def word_matrix(corpus, vectorizer=None):
     if vectorizer is None:
@@ -23,6 +24,7 @@ class DataWrapper(object):
 
     def __init__(self, filename, vectorizer=None):
         self.dataset = list(load_file(filename))
+        # self.dict = load_synonyms('./datasets/sinonimos.csv')
 
         if vectorizer is not None:
             self.vectorizer = vectorizer
@@ -73,6 +75,7 @@ class ClassifierWrapper(object):
             self.relevant = False
 
     def vtransform(self, tweets):
+        # dict = load_synonyms('./datasets/sinonimos.csv')
         return self.dataset.vectorizer.transform([process_tweet(x) for x in tweets])
 
     def train(self, test_size=0.2, random_state=None):
@@ -90,12 +93,7 @@ class ClassifierWrapper(object):
         print classification_report(y_test, y_pred,
                                     target_names=['verde', 'amarillo', 'rojo'])
         if not self.relevant:
-            plt.matshow(cm)
-            plt.title('Confusion matrix')
-            plt.colorbar()
-            plt.ylabel('True label')
-            plt.xlabel('Predicted label')
-            plt.show()
+            plot_confusion_matrix(cm)
 
         return cm
 
@@ -113,7 +111,6 @@ class ClassifierWrapper(object):
         plot_learning_curve(self.clf, title,
                         self.dataset.matrix, self.dataset.labels,
                         cv=cv, n_jobs=4)        
-        plt.show()
 
         scores = cross_validation.cross_val_score(self.clf,
                                                   self.dataset.matrix,

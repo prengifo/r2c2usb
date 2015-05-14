@@ -27,7 +27,7 @@ def get_relevant(**kwargs):
 def get_traffic(**kwargs):
     global TRAFFIC_WRAPPER
     if TRAFFIC_WRAPPER is None:
-        clf = kwargs.pop('clf', LogisticRegression(C=6))
+        clf = kwargs.pop('clf', LogisticRegression(C=8.5))
         wrapper = ClassifierWrapper(clf, './datasets/traffic1.csv')
         cross_validate = kwargs.pop('cross_validate', True)
         if cross_validate:
@@ -106,7 +106,7 @@ def find_path(source, dest):
     p[(0, source)] = -1
     visit = set()
     g = get_graph()
-    now = datetime.now() - timedelta(days=40)
+    now = datetime.now() - timedelta(days=10)
     # now = datetime(2015,05,07,15,00)
     print now
     while q:

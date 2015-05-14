@@ -8,6 +8,7 @@ def plot_confusion_matrix(cm):
     plt.matshow(cm)
     plt.title('Confusion matrix')
     plt.colorbar()
+    plt.set_cmap('Greys')
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
     plt.show()
