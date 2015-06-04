@@ -38,3 +38,18 @@ def load_synonyms(filename):
     for x in load_file(filename):
         synonyms.update({x[0].decode('iso-8859-1').encode('utf8'):x[1]})
     return synonyms
+
+def load_words():
+    '''Loads the words for the corrector'''
+    s = set()
+    for x in load_file('./datasets/lemario-general-del-espanol.txt'):
+        s.add(x[0])
+    for x in load_file('./datasets/verbos-espanol.txt'):
+        s.add(x[0])
+    for x in load_file('./datasets/verbos-espanol-conjugaciones.txt'):
+        s.add(x[0])
+    for x in load_file('./datasets/nombres-propios-es.txt'):
+        s.add(x[0])
+    for x in load_file('./datasets/apellidos-es.txt'):
+        s.add(x[0])
+    return s

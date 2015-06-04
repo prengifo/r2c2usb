@@ -1,5 +1,5 @@
 from itertools import chain
-from danielesis.utils import load_file, write_file
+from tesis.utils import load_file, write_file
 
 data_300 = load_file('data-300.csv')
 p2 = load_file('p2.csv')

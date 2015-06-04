@@ -8,12 +8,14 @@ from .base import ClassifierWrapper
 from .retriever import related_tweets_window, related_tweets_time
 from .utils import color_code_text
 from .graph import get_graph
+import time
 
 TRAFFIC_WRAPPER = None
 RELEVANT_WRAPPER = None
 
 def get_relevant(**kwargs):
     global RELEVANT_WRAPPER
+    # t0 = time.time()
     if RELEVANT_WRAPPER is None:
         clf = kwargs.pop('clf', LogisticRegression(C=10))
         wrapper = ClassifierWrapper(clf, './datasets/relevant.csv')
@@ -21,18 +23,21 @@ def get_relevant(**kwargs):
         if cross_validate:
             wrapper.cross_validate()
         wrapper.train()
+        # print time.time() - t0, "seconds from relevant classifier"
         RELEVANT_WRAPPER = wrapper
     return RELEVANT_WRAPPER
 
 def get_traffic(**kwargs):
     global TRAFFIC_WRAPPER
+    # t0 = time.time()
     if TRAFFIC_WRAPPER is None:
         clf = kwargs.pop('clf', LogisticRegression(C=8.5))
-        wrapper = ClassifierWrapper(clf, './datasets/traffic1.csv')
+        wrapper = ClassifierWrapper(clf, './datasets/traffic2.csv')
         cross_validate = kwargs.pop('cross_validate', True)
         if cross_validate:
             wrapper.cross_validate()
         wrapper.train()
+        # print time.time() - t0, "seconds from the multiclass classifier"
         TRAFFIC_WRAPPER = wrapper
     return TRAFFIC_WRAPPER
 
@@ -61,9 +66,10 @@ def get_stream_score(source, dest, window=45, now=None, spoof=False):
         qs = qs.filter(Tweet.created_at <= now)
     return get_score(qs)
 
-def get_historic_score(source, dest, start, end, alpha=0.7):
+def get_historic_score(source, dest, start, end, alpha=0.3):
     '''Return the historic ocurring at time [start, end]. '''
     today = datetime.now()
+    today = datetime(2015,05,07,15,00)
     partitions = [
         # this week
         (today-timedelta(days=7), None),
@@ -88,7 +94,11 @@ def get_historic_score(source, dest, start, end, alpha=0.7):
     # exponential smoothing
     t = scores[0]
     for score in scores[1:]:
+        print "Initial score %f in (%s,%s)" % (score, source, dest)
         t = alpha*score + (1-alpha)*t
+        print "Smoothed score %f with alpha = %f" % (t, alpha)
+
+    # t = 0
 
     return t
 
@@ -106,8 +116,8 @@ def find_path(source, dest):
     p[(0, source)] = -1
     visit = set()
     g = get_graph()
-    now = datetime.now() - timedelta(days=10)
-    # now = datetime(2015,05,07,15,00)
+    # now = datetime.now() - timedelta(days=10)
+    now = datetime(2015,05,07,15,00)
     print now
     while q:
         node = t, cur = heapq.heappop(q)

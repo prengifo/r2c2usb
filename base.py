@@ -7,7 +7,7 @@ from .utils import load_file
 from .preprocess import process_tweet
 import matplotlib.pyplot as plt
 from plots import plot_learning_curve, plot_confusion_matrix
-from danielesis.utils import load_synonyms
+from .utils import load_synonyms, load_words
 
 def word_matrix(corpus, vectorizer=None):
     if vectorizer is None:
@@ -24,7 +24,8 @@ class DataWrapper(object):
 
     def __init__(self, filename, vectorizer=None):
         self.dataset = list(load_file(filename))
-        # self.dict = load_synonyms('./datasets/sinonimos.csv')
+        self.dict = load_synonyms('./datasets/sinonimos.csv')
+        self.dict1 = load_words()
 
         if vectorizer is not None:
             self.vectorizer = vectorizer
@@ -48,7 +49,7 @@ class DataWrapper(object):
     @property
     def processed_tweets(self):
         if not hasattr(self, '_processed_tweets'):
-            self._processed_tweets = [process_tweet(x) for x in self.tweets]
+            self._processed_tweets = [process_tweet(x, self.dict, self.dict1) for x in self.tweets]
 
         return self._processed_tweets
 
@@ -69,14 +70,11 @@ class ClassifierWrapper(object):
         self.clf = clf
         self.dataset = DataWrapper(filename)
         self.plot = plot
-        if filename == './datasets/relevant.csv':
-            self.relevant = True
-        else:
-            self.relevant = False
+        self.dict = load_synonyms('./datasets/sinonimos.csv')
+        self.dict1 = load_words()
 
     def vtransform(self, tweets):
-        # dict = load_synonyms('./datasets/sinonimos.csv')
-        return self.dataset.vectorizer.transform([process_tweet(x) for x in tweets])
+        return self.dataset.vectorizer.transform([process_tweet(x, self.dict, self.dict1) for x in tweets])
 
     def train(self, test_size=0.2, random_state=None):
         # Split dataset into training and validation.
@@ -92,8 +90,8 @@ class ClassifierWrapper(object):
         print cm
         print classification_report(y_test, y_pred,
                                     target_names=['verde', 'amarillo', 'rojo'])
-        if not self.relevant:
-            plot_confusion_matrix(cm)
+        
+        plot_confusion_matrix(cm)
 
         return cm
 
