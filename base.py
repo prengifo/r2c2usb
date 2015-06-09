@@ -1,7 +1,7 @@
 # coding: utf-8
 
 from sklearn import cross_validation
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics import confusion_matrix, classification_report
 from .utils import load_file
 from .preprocess import process_tweet
@@ -11,7 +11,10 @@ from .utils import load_synonyms, load_words
 
 def word_matrix(corpus, vectorizer=None):
     if vectorizer is None:
-        vectorizer = TfidfVectorizer(min_df=1)
+        # Bag of words
+        vectorizer = TfidfVectorizer(min_df=1) 
+        # n-grama
+        # vectorizer = CountVectorizer(ngram_range=(1, 2), token_pattern=r'\b\w+\b', min_df=1)
 
     X = vectorizer.fit_transform(corpus)
     vocab = vectorizer.get_feature_names()
